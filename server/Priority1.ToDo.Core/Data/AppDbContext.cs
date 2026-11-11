@@ -10,11 +10,20 @@ public class AppDbContext : DbContext
     {
     }
 
+    public DbSet<TodoList> TodoLists => Set<TodoList>();
+
     public DbSet<Todo> Todos => Set<Todo>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<Todo>()
+            .HasOne(t => t.TodoList)
+            .WithMany(l => l.Todos)
+            .HasForeignKey(t => t.TodoListId)
+            .OnDelete(DeleteBehavior.Cascade);
+
     }
 
     public override async Task<int> SaveChangesAsync(CancellationToken ct = default)
@@ -33,7 +42,7 @@ public class AppDbContext : DbContext
     {
         var entries = ChangeTracker.Entries().ToList();
 
-        foreach(var entry in entries)
+        foreach (var entry in entries)
         {
             if (entry.Entity is EntityBase entity)
             {
