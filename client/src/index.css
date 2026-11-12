@@ -254,3 +254,32 @@ button.icon:hover {
   border-radius: 6px;
   font-size: 0.9rem;
 }
+
+.panel-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.panel-header h2 {
+  margin: 0;
+}
+
+.sort-control {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  color: #6e7781;
+}
+
+.sort-control select {
+  padding: 0.3rem 0.4rem;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 0.85rem;
+}
