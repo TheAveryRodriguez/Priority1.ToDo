@@ -28,7 +28,7 @@ Only SQL Server runs in Docker. The API and the React app run **natively** on yo
 From the repo root:
 
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 This starts SQL Server 2022 on `localhost:1433` with the SA credentials that the API is already configured to use (see `server/Priority1.ToDo.Api/appsettings.Development.json`). Data is kept in a named Docker volume, so it survives container restarts.
@@ -49,7 +49,7 @@ dotnet ef migrations add < MigrationName > --project ../Priority1.ToDo.Core --st
 dotnet ef database update
 ```
 
-This creates the `Priority1ToDo` database and the `Todos` table.
+This creates the `Priority1ToDo` database with the `TodoLists` and `Todos` tables.
 
 ### 3. Run the API
 
@@ -87,37 +87,46 @@ Priority1.ToDo/
 ├── server/
 │   ├── Priority1.ToDo.sln
 │   ├── Priority1.ToDo.Api/       # ASP.NET Core Web API (startup application)
-│   │   ├── Controllers/          # TodosController — thin, calls into services
+│   │   ├── Controllers/          # TodoListsController, TodosController — thin, call into services
 │   │   ├── Models/               # Request/response DTOs
 │   │   ├── Program.cs            # DI, EF, CORS, Swagger wiring
 │   │   └── appsettings*.json     # Connection string (Development matches Docker)
 │   └── Priority1.ToDo.Core/      # Class library (referenced by the Api)
-│       ├── Domain/               # EF entities (Todo)
+│       ├── Domain/               # EF entities (TodoList, Todo)
 │       ├── Data/                 # AppDbContext
 │       ├── Migrations/           # EF Code First migrations
-│       └── Services/             # Business logic (ITodoService / TodoService)
+│       └── Services/             # Business logic (TodoListService, TodoService + interfaces)
 └── client/                       # Vite + React app
     └── src/
         ├── api.js                # API base URL + fetch helpers
-        ├── App.jsx               # Loads todos, owns state, wires handlers
-        └── components/           # AddTodoForm, TodoList, TodoItem
+        ├── App.jsx               # Loads lists and todos, owns state, wires handlers
+        └── components/           # ListSidebar, ListItem, AddTodoForm, TodoList, TodoItem
 ```
 
 ### API endpoints
 
 | Method | Route | Description |
 | --- | --- | --- |
-| GET | `/todos` | List all todos |
+| GET | `/lists` | List all lists |
+| GET | `/lists/{id}` | Get one list |
+| POST | `/lists` | Create a list |
+| PUT | `/lists/{id}` | Rename a list |
+| DELETE | `/lists/{id}` | Delete a list and its todos |
+| GET | `/lists/{listId}/todos` | List a list's todos |
+| POST | `/lists/{listId}/todos` | Create a todo in a list |
 | GET | `/todos/{id}` | Get one todo |
-| POST | `/todos` | Create a todo |
-| PUT | `/todos/{id}` | Update a todo |
+| PUT | `/todos/{id}` | Update a todo (send `dueDate` too, or it's cleared) |
 | DELETE | `/todos/{id}` | Delete a todo |
 
-The `Todo` entity: `Id`, `Title` (required), `IsComplete` (default `false`), `CreateDate` (set on insert), `UpdateDate` (set on insert and every update).
+The `TodoList` entity: `Id`, `Name` (required, max 100), `CreateDate`, `UpdateDate`.
+
+The `Todo` entity: `Id`, `Title` (required), `IsComplete` (default `false`), `DueDate` (optional, date only), `TodoListId` (required), `CreateDate` (set on insert), `UpdateDate` (set on insert and every update).
 
 ### Notes / intentional simplifications
 
 - No authentication or authorization of any kind.
 - CORS is wide open for localhost in Development to keep local dev frictionless.
 - Migrations are applied manually (step 2), never on startup.
+- Deleting a list deletes its todos (cascade delete).
+- Due dates are calendar dates. Sorting and the overdue check happen in the browser, against the user's local date.
 
