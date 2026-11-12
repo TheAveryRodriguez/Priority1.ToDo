@@ -10,7 +10,7 @@ body {
 }
 
 .app {
-  max-width: 640px;
+  max-width: 900px;
   margin: 0 auto;
 }
 
@@ -99,4 +99,99 @@ ul.todo-list {
 .error {
   color: #cf222e;
   margin-bottom: 1rem;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (max-width: 640px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+h2 {
+  font-size: 1.1rem;
+  margin: 0 0 0.75rem;
+}
+
+.sidebar {
+  background: #fff;
+  border: 1px solid #d0d7de;
+  border-radius: 8px;
+  padding: 0.75rem;
+}
+
+ul.list-nav {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.list-item {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  border-radius: 6px;
+}
+
+.list-item.selected {
+  background: #ddf4ff;
+}
+
+.list-item .list-name {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+  border: none;
+  background: transparent;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.list-item.selected .list-name {
+  font-weight: 600;
+}
+
+.list-item input.edit-title {
+  flex: 1;
+  min-width: 0;
+  padding: 0.35rem 0.5rem;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+button.icon {
+  padding: 0.25rem 0.45rem;
+  border: none;
+  background: transparent;
+  color: #6e7781;
+}
+
+button.icon:hover {
+  background: #eaeef2;
+  color: #1f2328;
+}
+
+.add-list-form {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.add-list-form input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.4rem 0.5rem;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  font-size: 0.9rem;
 }
