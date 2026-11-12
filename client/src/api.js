@@ -42,19 +42,19 @@ export function getTodos(listId) {
   return fetch(listTodosUrl(listId)).then(handle);
 }
 
-export function createTodo(listId, { title, isComplete = false }) {
+export function createTodo(listId, { title, isComplete = false, dueDate = null }) {
   return fetch(listTodosUrl(listId), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ title, isComplete }),
+    body: JSON.stringify({ title, isComplete, dueDate }),
   }).then(handle);
 }
 
-export function updateTodo(id, { title, isComplete }) {
+export function updateTodo(id, { title, isComplete, dueDate }) {
   return fetch(`${TODOS_URL}/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ title, isComplete }),
+    body: JSON.stringify({ title, isComplete, dueDate }),
   }).then(handle);
 }
 

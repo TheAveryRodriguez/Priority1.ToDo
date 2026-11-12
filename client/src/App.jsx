@@ -97,9 +97,9 @@ export default function App() {
     }
   }
 
-  async function handleAdd(title) {
+  async function handleAdd(title, dueDate = null) {
     try {
-      const created = await createTodo(selectedListId, { title });
+      const created = await createTodo(selectedListId, { title, dueDate });
       setTodos((prev) => [...prev, created]);
     } catch (e) {
       setError(e.message);
@@ -111,6 +111,7 @@ export default function App() {
       const updated = await updateTodo(todo.id, {
         title: todo.title,
         isComplete: !todo.isComplete,
+        dueDate: todo.dueDate,
       });
       setTodos((prev) => prev.map((t) => (t.id === updated.id ? updated : t)));
     } catch (e) {
@@ -123,6 +124,7 @@ export default function App() {
       const updated = await updateTodo(todo.id, {
         title,
         isComplete: todo.isComplete,
+        dueDate: todo.dueDate,
       });
       setTodos((prev) => prev.map((t) => (t.id === updated.id ? updated : t)));
     } catch (e) {
