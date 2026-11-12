@@ -1,21 +1,67 @@
 import { useState } from 'react';
+import { formatDueDate, isOverdue } from '../dates';
 
-export default function TodoItem({ todo, onToggle, onRename, onDelete }) {
+export default function TodoItem({ todo, onToggle, onEdit, onDelete }) {
   const [editing, setEditing] = useState(false);
-  const [draft, setDraft] = useState(todo.title);
+  const [draftTitle, setDraftTitle] = useState(todo.title);
+  const [draftDueDate, setDraftDueDate] = useState(todo.dueDate ?? '');
 
-  function saveEdit() {
-    const trimmed = draft.trim();
-    if (trimmed && trimmed !== todo.title) {
-      onRename(todo, trimmed);
-    } else {
-      setDraft(todo.title);
+  function startEdit() {
+    setDraftTitle(todo.title);
+    setDraftDueDate(todo.dueDate ?? '');
+    setEditing(true);
+  }
+
+  function saveEdit(e) {
+    e.preventDefault();
+    const title = draftTitle.trim();
+    const dueDate = draftDueDate || null;
+    if (!title) return; // title is required; stay in edit mode
+
+    if (title !== todo.title || dueDate !== todo.dueDate) {
+      onEdit(todo, { title, dueDate });
     }
     setEditing(false);
   }
 
+  if (editing) {
+    return (
+      <li className="todo-item">
+        <form
+          className="edit-form"
+          onSubmit={saveEdit}
+          onKeyDown={(e) => {
+            if (e.key === 'Escape') setEditing(false);
+          }}
+        >
+          <input
+            className="edit-title"
+            value={draftTitle}
+            autoFocus
+            aria-label="Title"
+            onChange={(e) => setDraftTitle(e.target.value)}
+          />
+          <input
+            type="date"
+            value={draftDueDate}
+            aria-label="Due date"
+            onChange={(e) => setDraftDueDate(e.target.value)}
+          />
+          <button type="submit" className="primary">
+            Save
+          </button>
+          <button type="button" onClick={() => setEditing(false)}>
+            Cancel
+          </button>
+        </form>
+      </li>
+    );
+  }
+
+  const overdue = isOverdue(todo);
+
   return (
-    <li className="todo-item">
+    <li className={`todo-item ${overdue ? 'overdue' : ''}`}>
       <input
         type="checkbox"
         checked={todo.isComplete}
@@ -23,34 +69,23 @@ export default function TodoItem({ todo, onToggle, onRename, onDelete }) {
         title="Mark complete / incomplete"
       />
 
-      {editing ? (
-        <input
-          className="edit-title"
-          value={draft}
-          autoFocus
-          onChange={(e) => setDraft(e.target.value)}
-          onBlur={saveEdit}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') saveEdit();
-            if (e.key === 'Escape') {
-              setDraft(todo.title);
-              setEditing(false);
-            }
-          }}
-        />
-      ) : (
+      <div className="todo-main">
         <span
           className={`title ${todo.isComplete ? 'complete' : ''}`}
-          onDoubleClick={() => setEditing(true)}
+          onDoubleClick={startEdit}
           title="Double-click to edit"
         >
           {todo.title}
         </span>
-      )}
+        {todo.dueDate && (
+          <span className="due-date">
+            Due {formatDueDate(todo.dueDate)}
+            {overdue && <span className="badge-overdue">Overdue</span>}
+          </span>
+        )}
+      </div>
 
-      {!editing && (
-        <button onClick={() => setEditing(true)}>Edit</button>
-      )}
+      <button onClick={startEdit}>Edit</button>
       <button onClick={() => onDelete(todo)}>Delete</button>
     </li>
   );

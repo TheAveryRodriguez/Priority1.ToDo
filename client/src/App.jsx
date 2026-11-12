@@ -119,12 +119,12 @@ export default function App() {
     }
   }
 
-  async function handleRename(todo, title) {
+  async function handleEdit(todo, { title, dueDate }) {
     try {
       const updated = await updateTodo(todo.id, {
         title,
         isComplete: todo.isComplete,
-        dueDate: todo.dueDate,
+        dueDate,
       });
       setTodos((prev) => prev.map((t) => (t.id === updated.id ? updated : t)));
     } catch (e) {
@@ -173,7 +173,7 @@ export default function App() {
                   <TodoList
                     todos={todos}
                     onToggle={handleToggle}
-                    onRename={handleRename}
+                    onEdit={handleEdit}
                     onDelete={handleDelete}
                   />
                 )}

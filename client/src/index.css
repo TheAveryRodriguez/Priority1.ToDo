@@ -195,3 +195,62 @@ button.icon:hover {
   border-radius: 6px;
   font-size: 0.9rem;
 }
+
+.add-form input[type='date'] {
+  flex: 0 0 auto;
+}
+
+.todo-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.due-date {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  color: #6e7781;
+}
+
+.todo-item.overdue {
+  border-left: 4px solid #cf222e;
+}
+
+.todo-item.overdue .due-date {
+  color: #cf222e;
+  font-weight: 600;
+}
+
+.badge-overdue {
+  padding: 0.05rem 0.45rem;
+  border-radius: 999px;
+  background: #cf222e;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.edit-form {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.edit-form input.edit-title {
+  flex: 1;
+  min-width: 8rem;
+}
+
+.edit-form input[type='date'] {
+  padding: 0.35rem 0.5rem;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
