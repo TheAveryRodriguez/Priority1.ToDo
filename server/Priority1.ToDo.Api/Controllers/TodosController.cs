@@ -16,11 +16,11 @@ public class TodosController : ControllerBase
         _todoService = todoService;
     }
 
-    [HttpGet]
-    public async Task<ActionResult<List<TodoItem>>> GetAll(CancellationToken ct)
+    [HttpGet("/lists/{listId:int}/todos")]
+    public async Task<ActionResult<List<TodoItem>>> GetByList(int listId, CancellationToken ct)
     {
-        var todos = await _todoService.GetAllAsync(ct);
-        return Ok(todos.Select(TodoItem.From));
+        var todos = await _todoService.GetByListIdAsync(listId, ct);
+        return todos is null ? NotFound() : Ok(todos.Select(TodoItem.From));
     }
 
     [HttpGet("{id:int}")]
@@ -30,10 +30,15 @@ public class TodosController : ControllerBase
         return todo is null ? NotFound() : Ok(TodoItem.From(todo));
     }
 
-    [HttpPost]
-    public async Task<ActionResult<TodoItem>> Create([FromBody] CreateTodoRequest request, CancellationToken ct)
+    [HttpPost("/lists/{listId:int}/todos")]
+    public async Task<ActionResult<TodoItem>> Create(int listId, [FromBody] CreateTodoRequest request, CancellationToken ct)
     {
-        var created = await _todoService.CreateAsync(request.ToModel(), ct);
+        var created = await _todoService.CreateAsync(request.ToModel(listId), ct);
+        if (created is null)
+        {
+            return NotFound();
+        }
+
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, TodoItem.From(created));
     }
 

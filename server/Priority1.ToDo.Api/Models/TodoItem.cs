@@ -7,6 +7,7 @@ public class TodoItem
     public int Id { get; set; }
     public string Title { get; set; }
     public bool IsComplete { get; set; }
+    public int TodoListId { get; set; }
     public DateTime CreateDate { get; set; }
     public DateTime UpdateDate { get; set; }
 
@@ -17,6 +18,7 @@ public class TodoItem
             Id = todo.Id,
             Title = todo.Title,
             IsComplete = todo.IsComplete,
+            TodoListId = todo.TodoListId,
             CreateDate = todo.CreateDate,
             UpdateDate = todo.UpdateDate
         };
@@ -29,6 +31,7 @@ public class TodoItem
             Id = Id,
             Title = Title,
             IsComplete = IsComplete,
+            TodoListId = TodoListId,
             CreateDate = CreateDate,
             UpdateDate = UpdateDate
         };

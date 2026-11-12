@@ -14,9 +14,18 @@ public class TodoService : ITodoService
         _context = context;
     }
 
-    public async Task<List<Todo>> GetAllAsync(CancellationToken ct = default)
+    public async Task<List<Todo>?> GetByListIdAsync(int listId, CancellationToken ct = default)
     {
-        return await _context.Todos.ToListAsync(ct);
+        var listExists = await _context.TodoLists.AnyAsync(l => l.Id == listId, ct);
+        if (!listExists)
+        {
+            return null;
+        }
+
+        return await _context.Todos
+            .Where(t => t.TodoListId == listId)
+            .OrderBy(t => t.Id)
+            .ToListAsync(ct);
     }
 
     public async Task<Todo?> GetByIdAsync(int id, CancellationToken ct = default)
@@ -24,8 +33,14 @@ public class TodoService : ITodoService
         return await _context.Todos.FirstOrDefaultAsync(t => t.Id == id, ct);
     }
 
-    public async Task<Todo> CreateAsync(Todo itemToCreate, CancellationToken ct = default)
+    public async Task<Todo?> CreateAsync(Todo itemToCreate, CancellationToken ct = default)
     {
+        var listExists = await _context.TodoLists.AnyAsync(l => l.Id == itemToCreate.TodoListId, ct);
+        if (!listExists)
+        {
+            return null;
+        }
+
         _context.Todos.Add(itemToCreate);
         await _context.SaveChangesAsync(ct);
         return itemToCreate;

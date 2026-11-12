@@ -10,12 +10,13 @@ public class CreateTodoRequest
 
     public bool IsComplete { get; set; }
 
-    public Todo ToModel()
+    public Todo ToModel(int listId)
     {
         return new Todo
         {
             Title = Title,
-            IsComplete = IsComplete
+            IsComplete = IsComplete,
+            TodoListId = listId
         };
     }
 }
