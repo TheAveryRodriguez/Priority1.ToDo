@@ -56,7 +56,6 @@ export default function App() {
     };
   }, [selectedListId]);
 
-
   async function handleCreateList(name) {
     try {
       const created = await createList({ name });
@@ -97,7 +96,6 @@ export default function App() {
       setError(e.message);
     }
   }
-
 
   async function handleAdd(title) {
     try {
