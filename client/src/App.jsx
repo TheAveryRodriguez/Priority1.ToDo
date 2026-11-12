@@ -12,6 +12,7 @@ import {
 import ListSidebar from './components/ListSidebar';
 import AddTodoForm from './components/AddTodoForm';
 import TodoList from './components/TodoList';
+import { SORT_OPTIONS, sortTodos } from './sortTodos';
 
 export default function App() {
   const [lists, setLists] = useState([]);
@@ -20,6 +21,7 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [todosLoading, setTodosLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [sortBy, setSortBy] = useState('createDate');
 
   useEffect(() => {
     getLists()
@@ -97,9 +99,9 @@ export default function App() {
     }
   }
 
-  async function handleAdd(title) {
+  async function handleAdd(title, dueDate = null) {
     try {
-      const created = await createTodo(selectedListId, { title });
+      const created = await createTodo(selectedListId, { title, dueDate });
       setTodos((prev) => [...prev, created]);
     } catch (e) {
       setError(e.message);
@@ -111,6 +113,7 @@ export default function App() {
       const updated = await updateTodo(todo.id, {
         title: todo.title,
         isComplete: !todo.isComplete,
+        dueDate: todo.dueDate,
       });
       setTodos((prev) => prev.map((t) => (t.id === updated.id ? updated : t)));
     } catch (e) {
@@ -118,11 +121,12 @@ export default function App() {
     }
   }
 
-  async function handleRename(todo, title) {
+  async function handleEdit(todo, { title, dueDate }) {
     try {
       const updated = await updateTodo(todo.id, {
         title,
         isComplete: todo.isComplete,
+        dueDate,
       });
       setTodos((prev) => prev.map((t) => (t.id === updated.id ? updated : t)));
     } catch (e) {
@@ -140,6 +144,7 @@ export default function App() {
   }
 
   const selectedList = lists.find((l) => l.id === selectedListId);
+  const sortedTodos = sortTodos(todos, sortBy);
 
   return (
     <div className="app">
@@ -163,15 +168,27 @@ export default function App() {
           <main className="list-panel">
             {selectedList ? (
               <>
-                <h2>{selectedList.name}</h2>
+                <div className="panel-header">
+                  <h2>{selectedList.name}</h2>
+                  <label className="sort-control">
+                    Sort by
+                    <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+                      {SORT_OPTIONS.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                </div>
                 <AddTodoForm onAdd={handleAdd} />
                 {todosLoading ? (
                   <p className="muted">Loading…</p>
                 ) : (
                   <TodoList
-                    todos={todos}
+                    todos={sortedTodos}
                     onToggle={handleToggle}
-                    onRename={handleRename}
+                    onEdit={handleEdit}
                     onDelete={handleDelete}
                   />
                 )}

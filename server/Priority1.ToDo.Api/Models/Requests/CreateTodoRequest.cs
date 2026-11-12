@@ -10,13 +10,16 @@ public class CreateTodoRequest
 
     public bool IsComplete { get; set; }
 
+    public DateOnly? DueDate { get; set; }
+
     public Todo ToModel(int listId)
     {
         return new Todo
         {
             Title = Title,
             IsComplete = IsComplete,
-            TodoListId = listId
+            TodoListId = listId,
+            DueDate = DueDate
         };
     }
 }

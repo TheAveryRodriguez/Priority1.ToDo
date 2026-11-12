@@ -5,11 +5,13 @@ namespace Priority1.ToDo.Api.Models.Requests;
 
 public class UpdateTodoRequest
 {
-    
+
     [Required]
     public string Title { get; set; }
 
     public bool IsComplete { get; set; }
+
+    public DateOnly? DueDate { get; set; }
 
     public Todo ToModel(int id)
     {
@@ -17,7 +19,8 @@ public class UpdateTodoRequest
         {
             Id = id,
             Title = Title,
-            IsComplete = IsComplete
+            IsComplete = IsComplete,
+            DueDate = DueDate
         };
     }
 }
