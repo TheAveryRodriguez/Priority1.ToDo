@@ -8,6 +8,7 @@ public class TodoItem
     public string Title { get; set; }
     public bool IsComplete { get; set; }
     public int TodoListId { get; set; }
+    public DateOnly? DueDate { get; set; }
     public DateTime CreateDate { get; set; }
     public DateTime UpdateDate { get; set; }
 
@@ -19,6 +20,7 @@ public class TodoItem
             Title = todo.Title,
             IsComplete = todo.IsComplete,
             TodoListId = todo.TodoListId,
+            DueDate = todo.DueDate,
             CreateDate = todo.CreateDate,
             UpdateDate = todo.UpdateDate
         };
@@ -33,7 +35,8 @@ public class TodoItem
             IsComplete = IsComplete,
             TodoListId = TodoListId,
             CreateDate = CreateDate,
-            UpdateDate = UpdateDate
+            UpdateDate = UpdateDate,
+            DueDate = DueDate
         };
     }
 }
